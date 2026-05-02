@@ -40,7 +40,7 @@ const UploadBook = () => {
     };
 
     // Send data to the database using fetch
-    fetch("http://localhost:5000/upload-book", {
+    fetch("http://localhost:5000/api/upload-book", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -27,7 +27,7 @@ const router = createBrowserRouter([
       {
         path: "/book/:id",
         element: <SingleBook />,
-        loader: ({ params }) => fetch(`http://localhost:5000/book/${params.id}`),
+        loader: ({ params }) => fetch(`http://localhost:5000/api/book/${params.id}`),
       },
     ],
   },
@@ -54,7 +54,7 @@ const router = createBrowserRouter([
       {
         path: "/admin/dashboard/edit/:id",
         element: <PrivateRoute><EditBooks /></PrivateRoute>,
-        loader: ({ params }) => fetch(`http://localhost:5000/book/${params.id}`),
+        loader: ({ params }) => fetch(`http://localhost:5000/api/book/${params.id}`),
       },
     ],
   },

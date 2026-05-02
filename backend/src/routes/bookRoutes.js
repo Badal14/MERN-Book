@@ -1,6 +1,6 @@
 import express from 'express';
 import Book from '../models/Book.js';
-import { protect } from '../middleware/authMiddleware.js';
+
 
 const router = express.Router();
 
@@ -48,7 +48,7 @@ router.get('/book/:id', async (req, res) => {
 });
 
 // POST - Create a new book (Upload book)
-router.post('/upload-book', protect, async (req, res) => {
+router.post('/upload-book', async (req, res) => {
   try {
     const { bookTitle, authorName, imgUrl, category, bookDescription, bookPDFURL } = req.body;
 
@@ -92,7 +92,7 @@ router.post('/upload-book', protect, async (req, res) => {
 });
 
 // PATCH - Update a book
-router.patch('/book/:id', protect, async (req, res) => {
+router.patch('/book/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { bookTitle, authorName, imgUrl, category, bookDescription, bookPDFURL } = req.body;
@@ -148,7 +148,7 @@ router.patch('/book/:id', protect, async (req, res) => {
 });
 
 // DELETE - Delete a book
-router.delete('/book/:id', protect, async (req, res) => {
+router.delete('/book/:id', async (req, res) => {
   try {
     const { id } = req.params;
 

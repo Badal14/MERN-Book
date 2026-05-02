@@ -9,7 +9,7 @@ const ManageBooks = () => {
 
   // Fetch all books on component mount
   useEffect(() => {
-    fetch("http://localhost:5000/all-books")
+    fetch("http://localhost:5000/api/all-books")
       .then((res) => res.json())
       .then((data) => setAllBooks(data))
       .catch(() => toast.error("Failed to fetch books."));
@@ -17,7 +17,7 @@ const ManageBooks = () => {
 
   // Delete a single book
   const handleDelete = (id) => {
-    fetch(`http://localhost:5000/book/${id}`, {
+    fetch(`http://localhost:5000/api/book/${id}`, {
       method: "DELETE",
     })
       .then((res) => {
