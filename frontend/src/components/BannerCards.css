@@ -1,0 +1,50 @@
+/* Ensure the Swiper fits the parent container */
+.right-side {
+  width: 100%;
+  max-width: 500px; /* Adjust the max width as needed */
+  height: 100%; /* Make it take full height of the parent */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mySwiper {
+  width: 90%; /* Reduce width for a smaller card size */
+  height: 90%; /* Reduce height for a smaller card size */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mySwiper .swiper-slide {
+  width: 90%; /* Reduce slide size by 10% */
+  height: 90%; /* Reduce slide size by 10% */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+
+.mySwiper .swiper-slide img {
+  width: 100%; /* Fit the reduced card size */
+  height: 100%; /* Fit the reduced card size */
+  object-fit: cover;
+}
+
+.mySwiper .swiper-slide-active {
+  transform: scale(1.05); /* Slight zoom effect on active card */
+}
+
+.mySwiper .swiper-pagination-bullet {
+  background-color: #007aff;
+}
+
+.mySwiper .swiper-pagination-bullet-active {
+  background-color: rgb(255, 255, 255);
+}
+
+/* Slider */
+
