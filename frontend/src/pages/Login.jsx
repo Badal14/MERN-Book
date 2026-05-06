@@ -3,19 +3,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import googleLogo from "../assets/google-logo.svg"; // Ensure the path is correct
 
 const Login = () => {
-  const { loginUser } = useContext(AuthContext); // Assuming you have loginUser in context
+  const { loginUser } = useContext(AuthContext);
   const [error, setError] = useState("");
-  const auth = getAuth();
-  const googleProvider = new GoogleAuthProvider();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -28,35 +19,15 @@ const Login = () => {
     const email = form.email.value;
     const password = form.password.value;
 
-    // Validate if email is registered
-    signInWithEmailAndPassword(auth, email, password)
+    loginUser(email, password)
       .then(() => {
         toast.success("Logged in successfully!");
         form.reset();
         navigate(from, { replace: true });
       })
       .catch((error) => {
-        // If email is not registered or invalid password, handle error
         toast.error("Invalid credentials. Please try again.");
         setError("Invalid credentials. Please try again.");
-      });
-  };
-
-  const handleGoogleLogin = () => {
-    signInWithPopup(auth, googleProvider)
-      .then((result) => {
-        // Check if the Google account is linked to a registered email
-        const user = result.user;
-        if (user.emailVerified) {
-          toast.success("Logged in with Google successfully!");
-          navigate(from, { replace: true });
-        } else {
-          toast.error("Google account not linked with a registered user.");
-        }
-      })
-      .catch((error) => {
-        toast.error("Error logging in with Google.");
-        setError("Error logging in with Google.");
       });
   };
 
@@ -108,20 +79,7 @@ const Login = () => {
                 Log in
               </button>
             </form>
-            <div className="text-center">
-              <p className="text-gray-500 dark:text-gray-400">Or log in with</p>
-              <button
-                onClick={handleGoogleLogin}
-                className="w-full mt-2 flex items-center justify-center border border-gray-300 bg-transparent text-black py-2 px-4 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
-              >
-                <img
-                  src={googleLogo}
-                  alt="Google logo"
-                  className="h-5 w-5 mr-2"
-                />
-                Log in with Google
-              </button>
-            </div>
+
 
             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
               Don't have an account?{" "}

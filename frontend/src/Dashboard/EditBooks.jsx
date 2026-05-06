@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 const EditBooks = () => {
   const { id } = useParams();
   const navigate = useNavigate(); // Add this hook
-  const { bookTitle, authorName, imgUrl, category, bookDescription, bookPDFURL } = useLoaderData();
+  const { bookTitle, authorName, imgUrl, category, bookDescription, bookPDFURL, price } = useLoaderData();
 
   const bookCategory = [
     "Fiction", "Non-Fiction", "Self-Help", "Biography", "Science", "Fantasy",
@@ -26,6 +26,7 @@ const EditBooks = () => {
     const category = form.category.value;
     const bookDescription = form.bookDescription.value;
     const bookPDFURL = form.bookPDFURL.value;
+    const price = form.price.value;
 
     if (!bookTitle || !authorName || !imgUrl || !category || !bookDescription || !bookPDFURL) {
       toast.error("All fields are required!");
@@ -39,6 +40,7 @@ const EditBooks = () => {
       category,
       bookDescription,
       bookPDFURL,
+      price
     };
 
     fetch(`http://localhost:5000/api/book/${id}`, {
@@ -146,19 +148,35 @@ const EditBooks = () => {
           ></textarea>
         </div>
 
-        {/* PDF URL */}
-        <div>
-          <label htmlFor="bookPDFURL" className="block mb-2 font-semibold">
-            Book PDF URL
-          </label>
-          <input
-            type="text"
-            id="bookPDFURL"
-            name="bookPDFURL"
-            defaultValue={bookPDFURL}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
+        {/* PDF URL and Price */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="bookPDFURL" className="block mb-2 font-semibold">
+              Book PDF URL
+            </label>
+            <input
+              type="text"
+              id="bookPDFURL"
+              name="bookPDFURL"
+              defaultValue={bookPDFURL}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="price" className="block mb-2 font-semibold">
+              Price ($)
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              id="price"
+              name="price"
+              defaultValue={price}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
         </div>
 
         {/* Submit Button */}

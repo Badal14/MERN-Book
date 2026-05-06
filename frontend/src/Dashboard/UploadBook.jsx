@@ -22,6 +22,7 @@ const UploadBook = () => {
     const category = form.category.value;
     const bookDescription = form.bookDescription.value;
     const bookPDFURL = form.bookPDFURL.value;
+    const price = form.price.value || "10.99";
 
     // Check if all fields are filled
     if (!bookTitle || !authorName || !imgUrl || !category || !bookDescription || !bookPDFURL) {
@@ -37,6 +38,7 @@ const UploadBook = () => {
       category,
       bookDescription,
       bookPDFURL,
+      price
     };
 
     // Send data to the database using fetch
@@ -149,19 +151,35 @@ const UploadBook = () => {
           ></textarea>
         </div>
 
-        {/* Fourth Row: Book PDF URL */}
-        <div>
-          <label htmlFor="bookPDFURL" className="block mb-2 font-semibold">
-            Book PDF URL
-          </label>
-          <input
-            type="text"
-            id="bookPDFURL"
-            name="bookPDFURL"
-            placeholder="Book PDF URL"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
+        {/* Row: Book PDF URL and Price */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="bookPDFURL" className="block mb-2 font-semibold">
+              Book PDF URL
+            </label>
+            <input
+              type="text"
+              id="bookPDFURL"
+              name="bookPDFURL"
+              placeholder="Book PDF URL"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="price" className="block mb-2 font-semibold">
+              Price ($)
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              id="price"
+              name="price"
+              placeholder="10.99"
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
         </div>
 
         {/* Upload Book Button */}

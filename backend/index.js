@@ -1,72 +1,159 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import bookRoutes from './src/routes/bookRoutes.js';
-import authRoutes from './src/routes/authRoutes.js';
-
-dotenv.config();
-
+const express = require('express')
 const app = express();
-const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/mern-bookstore';
-const NODE_ENV = process.env.NODE_ENV || 'development';
+const cors = require('cors')
+const port = process.env.PORT || 5000;
 
-// Middleware
+// middlewear 
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose
-  .connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
-  .then(() => {
-    console.log('✅ Connected to MongoDB successfully');
-  })
-  .catch((err) => {
-    console.error('❌ MongoDB connection error:', err.message);
-    process.exit(1);
-  });
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api', bookRoutes);
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+})
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({ message: 'Server is running' });
+// mongodb confiq here
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const uri = "mongodb+srv://badallad67_db_user:Badal123@bookstore.p04estm.mongodb.net/?retryWrites=true&w=majority";
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
 });
 
-// Redirect root API calls to /api endpoints for backward compatibility
-app.get('/all-books', (req, res) => {
-  res.redirect('/api/all-books');
-});
+async function run() {
+    try {
+        // Connect the client to the server	(optional starting in v4.7)
+        await client.connect();
+        // Send a ping to confirm a successful connection
+        const bookCollections = client.db("BookInventory").collection("Books");
+        const usersCollection = client.db("BookInventory").collection("Users");
 
-app.get('/book/:id', (req, res) => {
-  res.redirect(`/api/book/${req.params.id}`);
-});
+        // register user
+        app.post("/api/auth/register", async (req, res) => {
+            const { name, email, password } = req.body;
+            if (!name || !email || !password) {
+                return res.status(400).json({ message: "Name, email, and password are required" });
+            }
 
-app.post('/upload-book', (req, res) => {
-  res.redirect('/api/upload-book');
-});
+            const existingUser = await usersCollection.findOne({ email });
+            if (existingUser) {
+                return res.status(409).json({ message: "Email is already registered" });
+            }
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ message: 'Endpoint not found' });
-});
+            const newUser = { name, email, password }; 
+            const result = await usersCollection.insertOne(newUser);
+            
+            res.status(201).json({
+                message: "User registered successfully",
+                user: {
+                    id: result.insertedId,
+                    name: newUser.name,
+                    email: newUser.email
+                },
+                token: "simulated_jwt_token_" + result.insertedId 
+            });
+        });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err.message);
-  res.status(500).json({ 
-    message: 'Internal server error', 
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Unknown error' 
-  });
-});
+        // login user
+        app.post("/api/auth/login", async (req, res) => {
+            const { email, password } = req.body;
+            if (!email || !password) {
+                return res.status(400).json({ message: "Email and password are required" });
+            }
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
-});
+            const user = await usersCollection.findOne({ email });
+            if (!user || user.password !== password) {
+                return res.status(401).json({ message: "Invalid email or password" });
+            }
+
+            res.status(200).json({
+                message: "Login successful",
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email
+                },
+                token: "simulated_jwt_token_" + user._id
+            });
+        });
+
+
+        // insert a book to db: Post Method
+        app.post("/api/upload-book", async (req, res) => {
+            const data = req.body;
+            // console.log(data);
+            const result = await bookCollections.insertOne(data);
+            res.send(result);
+        })
+
+        // // get all books from db
+        // app.get("/all-books", async (req, res) => {
+        //     const books = bookCollections.find();
+        //     const result = await books.toArray();
+        //     res.send(result)
+        // })
+
+        // get all books & find by a category from db
+        app.get("/api/all-books", async (req, res) => {
+            let query = {};
+            if (req.query?.category) {
+                query = { category: req.query.category }
+            }
+            const result = await bookCollections.find(query).toArray();
+            res.send(result)
+        })
+
+        // update a books method
+        app.patch("/api/book/:id", async (req, res) => {
+            const id = req.params.id;
+            // console.log(id);
+            const updateBookData = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    ...updateBookData
+                }
+            }
+            const options = { upsert: true };
+
+            // update now
+            const result = await bookCollections.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
+
+
+        // delete a item from db
+        app.delete("/api/book/:id", async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const result = await bookCollections.deleteOne(filter);
+            res.send(result);
+        })
+
+
+        // get a single book data
+        app.get("/api/book/:id", async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const result = await bookCollections.findOne(filter);
+            res.send(result)
+        })
+
+
+        await client.db("admin").command({ ping: 1 });
+        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    } finally {
+        // Ensures that the client will close when you finish/error
+        // await client.close();
+    }
+}
+run().catch(console.dir);
+
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+})

@@ -5,6 +5,7 @@ import Shop from "../pages/Shop";
 import About from "../pages/About";
 import Blog from "../pages/Blog";
 import SingleBook from "../pages/SingleBook";
+import Cart from "../pages/Cart";
 import DashboardLayout from "../Dashboard/DashboardLayout";
 import Dashboard from "../Dashboard/Dashboard";
 import UploadBook from "../Dashboard/UploadBook";
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
         element: <SingleBook />,
         loader: ({ params }) => fetch(`http://localhost:5000/api/book/${params.id}`),
       },
+      { path: "/cart", element: <Cart /> },
     ],
   },
   {

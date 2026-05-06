@@ -4,7 +4,7 @@ import BestSellerBooks from "../components/BestSellerBooks";
 import FavBook from "../components/FavBook";
 import PromoBanner from "../components/PromoBanner";
 import OtherBooks from "./OtherBooks";
-// import Footer from "../components/Footer";
+import CustomFooter from "../components/CustomFooter";
 
 const Home = () => {
   return (
@@ -14,6 +14,7 @@ const Home = () => {
       <FavBook />
       <PromoBanner />
       <OtherBooks />
+      <CustomFooter />
     </div>
   );
 };

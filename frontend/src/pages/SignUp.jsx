@@ -3,14 +3,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import googleLogo from "../assets/google-logo.svg"; // Ensure the path is correct
 
 const SignUp = () => {
   const { createUser } = useContext(AuthContext);
   const [error, setError] = useState("");
-  const auth = getAuth();
-  const googleProvider = new GoogleAuthProvider();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -20,25 +16,14 @@ const SignUp = () => {
   const handleSignUp = (event) => {
     event.preventDefault();
     const form = event.target;
+    const name = form.name.value;
     const email = form.email.value;
     const password = form.password.value;
 
-    createUser(email, password)
+    createUser(name, email, password)
       .then(() => {
         toast.success("Account Created Successfully!");
         form.reset();
-        navigate(from, { replace: true });
-      })
-      .catch((error) => {
-        toast.error(error.message);
-        setError(error.message);
-      });
-  };
-
-  const handleGoogleSignUp = () => {
-    signInWithPopup(auth, googleProvider)
-      .then((result) => {
-        toast.success("Signed up with Google successfully!");
         navigate(from, { replace: true });
       })
       .catch((error) => {
@@ -56,6 +41,22 @@ const SignUp = () => {
               Create an account
             </h1>
             <form onSubmit={handleSignUp} className="space-y-4 md:space-y-6">
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Your name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="John Doe"
+                  required
+                />
+              </div>
               <div>
                 <label
                   htmlFor="email"
@@ -95,22 +96,7 @@ const SignUp = () => {
                 Create an account
               </button>
             </form>
-            <div className="text-center">
-              <p className="text-gray-500 dark:text-gray-400">
-                Or sign up with
-              </p>
-              <button
-                onClick={handleGoogleSignUp}
-                className="w-full mt-2 flex items-center justify-center border border-gray-300 bg-transparent text-black py-2 px-4 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
-              >
-                <img
-                  src={googleLogo}
-                  alt="Google logo"
-                  className="h-5 w-5 mr-2"
-                />
-                Sign Up with Google
-              </button>
-            </div>
+
 
             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
               Already have an account?{" "}
